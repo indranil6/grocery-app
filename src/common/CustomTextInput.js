@@ -9,6 +9,7 @@ const CustomTextInput = props => {
       <TextInput
         keyboardType={props.keyboardType || 'default'}
         placeholder={props.placeholder || ''}
+        placeholderTextColor={'#000'}
         secureTextEntry={props.secureTextEntry || false}
         value={props.value || ''}
         onChangeText={props.onChangeText || null}
