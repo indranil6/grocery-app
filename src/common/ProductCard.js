@@ -1,14 +1,22 @@
+import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 
 const ProductCard = ({product, cardStyles}) => {
+  const navigation = useNavigation();
   return (
-    <TouchableOpacity style={[styles.card, cardStyles]}>
+    <TouchableOpacity
+      style={[styles.card, cardStyles]}
+      onPress={() => {
+        navigation.navigate('ProductDetails', {product});
+      }}>
       <Image source={{uri: product.image}} style={styles.productImage} />
       <View style={styles.cardContent}>
         <Text style={styles.title}>{product.title}</Text>
         <Text style={styles.category}>{product.category}</Text>
-        <Text style={styles.description}>{product.description}</Text>
+        <Text style={styles.description} numberOfLines={2}>
+          {product.description}
+        </Text>
         <Text style={styles.price}>${product.price}</Text>
       </View>
     </TouchableOpacity>
@@ -43,6 +51,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#888',
     marginVertical: 5,
+    textTransform: 'capitalize',
   },
   description: {
     fontSize: 12,
@@ -56,4 +65,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProductCard;
+export default React.memo(ProductCard);

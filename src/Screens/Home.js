@@ -1,149 +1,165 @@
-import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
-import React from 'react';
-import {useNavigation} from '@react-navigation/native';
-import Main from '../bottom/Main';
-import Search from '../bottom/Search';
-import Cart from '../bottom/Cart';
-import Wishlist from '../bottom/Wishlist';
-import Profile from '../bottom/Profile';
-const TABS = {
-  MAIN: 'main',
-  SEARCH: 'search',
-  CART: 'cart',
-  WISHLIST: 'wishlist',
-  PROFILE: 'profile',
-};
+import React, {useState, useEffect} from 'react';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+  Image,
+  ScrollView,
+} from 'react-native';
+import Header from '../common/Header';
+import ProductCard from '../common/ProductCard';
+import Footer from '../common/Footer';
+import HomeSkeleton from '../skeletons/HomeSkeleton';
+import axios from 'axios';
 
-const Home = () => {
-  const navigation = useNavigation();
-  const [selectedTab, setSelectedTab] = React.useState(TABS.MAIN);
+const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 
-  return (
-    <View style={styles.container}>
-      {selectedTab === TABS.MAIN && <Main />}
-      {selectedTab === TABS.SEARCH && <Search />}
-      {selectedTab === TABS.CART && <Cart />}
-      {selectedTab === TABS.WISHLIST && <Wishlist />}
-      {selectedTab === TABS.PROFILE && <Profile />}
-      <View style={styles.drawerContainer}>
-        <TouchableOpacity
-          style={styles.drawerItem}
-          onPress={() => {
-            setSelectedTab(TABS.MAIN);
-          }}>
-          <Image
-            source={require('../images/home.png')}
-            style={
-              selectedTab === TABS.MAIN
-                ? [styles.drawerImage, styles.drawerImageActive]
-                : styles.drawerImage
-            }
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.drawerItem}
-          onPress={() => {
-            setSelectedTab(TABS.SEARCH);
-          }}>
-          <Image
-            source={require('../images/search-interface-symbol.png')}
-            style={
-              selectedTab === TABS.SEARCH
-                ? [styles.drawerImage, styles.drawerImageActive]
-                : styles.drawerImage
-            }
-          />
-        </TouchableOpacity>
+const EcommerceHome = () => {
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [allProducts, setAllProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-        <View style={styles.drawerItem}>
-          <TouchableOpacity
-            style={
-              selectedTab === TABS.CART
-                ? [styles.middleItem, styles.middleItemActive]
-                : styles.middleItem
-            }
-            onPress={() => {
-              setSelectedTab(TABS.CART);
-            }}>
-            <Image
-              source={require('../images/bag.png')}
-              style={[styles.drawerImage, {tintColor: '#fff'}]}
+  // Load products when a category is selected
+  useEffect(() => {
+    if (selectedCategory) {
+      setProducts(allProducts[selectedCategory]);
+    }
+  }, [selectedCategory, allProducts]);
+
+  const fetchData = async () => {
+    let categoriesData = await axios.get(
+      'https://fakestoreapi.com/products/categories',
+    );
+    let categories = categoriesData.data;
+    let tempProducts = {};
+    //get products from each category
+    for (let category of categories) {
+      let productsData = await axios.get(
+        `https://fakestoreapi.com/products/category/${category}`,
+      );
+      let products = productsData.data;
+      tempProducts[category] = products;
+    }
+    setAllProducts(tempProducts);
+    setCategories(categories);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const renderSlidableSections = () => {
+    return categories.map(category => (
+      <View key={category}>
+        <Text style={[styles.sectionTitle, {textTransform: 'capitalize'}]}>
+          {category}
+        </Text>
+        <FlatList
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          data={allProducts[category]}
+          renderItem={({item}) => (
+            <ProductCard
+              product={item}
+              cardStyles={{width: screenWidth * 0.9, marginRight: 10}}
             />
-          </TouchableOpacity>
-        </View>
-
-        <TouchableOpacity
-          style={styles.drawerItem}
-          onPress={() => {
-            setSelectedTab(TABS.WISHLIST);
-          }}>
-          <Image
-            source={require('../images/heart.png')}
-            style={
-              selectedTab === TABS.WISHLIST
-                ? [styles.drawerImage, styles.drawerImageActive]
-                : styles.drawerImage
-            }
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.drawerItem}
-          onPress={() => {
-            setSelectedTab(TABS.PROFILE);
-          }}>
-          <Image
-            source={require('../images/user.png')}
-            style={
-              selectedTab === TABS.PROFILE
-                ? [styles.drawerImage, styles.drawerImageActive]
-                : styles.drawerImage
-            }
-          />
-        </TouchableOpacity>
+          )}
+          keyExtractor={product => product.id.toString()}
+        />
       </View>
+    ));
+  };
+  if (isLoading) {
+    return <HomeSkeleton />;
+  }
+  return (
+    <View style={{flex: 1}}>
+      <Header />
+      <View style={styles.container}>
+        <Image source={require('../images/banner.jpg')} style={styles.banner} />
+        {/* Slidable Pills List */}
+        <FlatList
+          data={categories}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={category => category}
+          renderItem={({item: category}) => (
+            <CategoryPill
+              {...{category, selectedCategory, setSelectedCategory}}
+            />
+          )}
+          style={styles.pillsContainer}
+        />
+
+        {/* Infinite Scroll or Slidable Sections */}
+        {selectedCategory ? (
+          <FlatList
+            data={products}
+            renderItem={({item}) => <ProductCard product={item} />}
+            keyExtractor={product => product.id.toString()}
+            onEndReached={() => console.log('Load more products...')} // Add pagination logic here
+          />
+        ) : (
+          <ScrollView>{renderSlidableSections()}</ScrollView>
+        )}
+      </View>
+      <Footer />
     </View>
   );
 };
 
-export default Home;
-
+export default EcommerceHome;
+const CategoryPill = ({category, selectedCategory, setSelectedCategory}) => (
+  <TouchableOpacity
+    key={category}
+    onPress={() =>
+      setSelectedCategory(
+        category === selectedCategory || category === 'All' ? null : category,
+      )
+    }
+    style={[styles.pill, selectedCategory === category && styles.selectedPill]}>
+    <Text style={styles.pillText}>{category}</Text>
+  </TouchableOpacity>
+);
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    position: 'relative',
-  },
-  drawerContainer: {
-    width: '100%',
-    height: 70,
+  container: {padding: 10, height: screenHeight - 100},
+  pillsContainer: {marginBottom: 10, marginTop: 10, height: 60},
+  pill: {
+    padding: 10,
     backgroundColor: '#fff',
-    position: 'absolute',
-    bottom: 0,
+    elevation: 5,
+    marginRight: 10,
+    borderRadius: 20,
+    borderColor: '#000',
+    width: 100,
     alignItems: 'center',
-    flexDirection: 'row',
+    height: 40,
   },
-  drawerItem: {
-    width: '20%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
+  selectedPill: {elevation: 10, backgroundColor: 'orange', color: '#fff'},
+  pillText: {
+    color: '#000',
+    textTransform: 'capitalize',
+    textAlignVertical: 'center',
+    textAlign: 'center',
   },
-  middleItem: {
-    width: 50,
-    height: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 25,
-    backgroundColor: '#000',
+  section: {width: screenWidth, padding: 10},
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#000',
   },
-  middleItemActive: {
-    backgroundColor: 'green',
-  },
-  drawerImage: {
-    width: 24,
-    height: 24,
-    tintColor: '#8e8e8e',
-  },
-  drawerImageActive: {
-    tintColor: '#000',
+  banner: {
+    width: '100%',
+    height: 150,
+    resizeMode: 'cover',
+    borderRadius: 10,
+    marginTop: 10,
   },
 });

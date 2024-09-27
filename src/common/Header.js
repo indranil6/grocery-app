@@ -16,7 +16,7 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default React.memo(Header);
 
 const styles = StyleSheet.create({
   header: {
