@@ -106,20 +106,29 @@ const CheckoutPage = ({navigation}) => {
             <TouchableOpacity
               style={[
                 styles.paymentOption,
+                selectedPaymentMethod === 'cod' && styles.selectedPaymentOption,
+              ]}
+              onPress={() => setSelectedPaymentMethod('cod')}>
+              <Text style={styles.paymentText}>COD</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.paymentOption,
+                selectedPaymentMethod === 'upi' && styles.selectedPaymentOption,
+              ]}
+              onPress={() => setSelectedPaymentMethod('upi')}>
+              <Text style={styles.paymentText}>UPI</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.paymentOption,
                 selectedPaymentMethod === 'credit-card' &&
                   styles.selectedPaymentOption,
               ]}
               onPress={() => setSelectedPaymentMethod('credit-card')}>
               <Text style={styles.paymentText}>Credit Card</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.paymentOption,
-                selectedPaymentMethod === 'paypal' &&
-                  styles.selectedPaymentOption,
-              ]}
-              onPress={() => setSelectedPaymentMethod('paypal')}>
-              <Text style={styles.paymentText}>PayPal</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -214,14 +223,15 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   paymentOption: {
-    padding: 15,
+    flex: 1,
+    padding: 10,
     backgroundColor: '#f1f1f1',
     borderRadius: 5,
-    width: '48%',
     alignItems: 'center',
   },
   selectedPaymentOption: {
     backgroundColor: '#27ae60',
+    color: '#fff',
   },
   paymentText: {
     color: '#333',
