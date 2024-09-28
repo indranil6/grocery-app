@@ -15,7 +15,7 @@ const Footer = () => {
   const selectedTab = route.name;
   const navigation = useNavigation();
   const setSelectedTab = tab => {
-    if (tab === TABS.MAIN) navigation.navigate(tab);
+    if (tab === TABS.MAIN || tab === TABS.CART) navigation.navigate(tab);
     else alert('Primarily for testing purpose');
   };
   return (

@@ -7,12 +7,16 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
-import React from 'react';
+import React, {useMemo} from 'react';
 import Footer from '../common/Footer';
 import Header from '../common/Header';
 import {useRoute} from '@react-navigation/native';
-
-const {height: screenHeight} = Dimensions.get('screen');
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  addToCart,
+  decrementQuantity,
+  incrementQuantity,
+} from '../redux/actions';
 const ProductDetails = () => {
   const {params} = useRoute();
   const {product} = params;
@@ -20,13 +24,34 @@ const ProductDetails = () => {
     <View style={{flex: 1}}>
       <Header />
       <ProductDetailsPage product={product} />
-      {/* <Footer /> */}
+      <Footer />
     </View>
   );
 };
 
 export default ProductDetails;
 const ProductDetailsPage = ({product}) => {
+  const dispatch = useDispatch();
+  const cartItems = useSelector(state => state.cart.items);
+  const isInCart = useMemo(() => {
+    return cartItems.some(item => item.id === product.id);
+  }, [cartItems, product.id]);
+
+  const cartProduct = useMemo(() => {
+    return cartItems.find(item => item.id === product.id);
+  }, [cartItems, product.id]);
+
+  // console.log(isInCart);
+
+  const handleAddToCart = () => {
+    dispatch(addToCart(product));
+  };
+  const handleIncrementQuantity = () => {
+    dispatch(incrementQuantity(product.id));
+  };
+  const handleDecrementQuantity = () => {
+    dispatch(decrementQuantity(product.id));
+  };
   return (
     <ScrollView style={styles.container}>
       {/* Product Image */}
@@ -44,31 +69,73 @@ const ProductDetailsPage = ({product}) => {
         <Text style={styles.description}>{product.description}</Text>
 
         {/* Add to Cart Button */}
-        <TouchableOpacity style={styles.addToCartButton}>
+        <TouchableOpacity
+          style={[styles.addToCartButton, {backgroundColor: '#000'}]}>
           <Image
             style={styles.addToCartImage}
-            source={require('../images/bag.png')}
+            source={require('../images/payment-method.png')}
           />
           <Text style={styles.buttonText}>Buy Now</Text>
         </TouchableOpacity>
 
         <View
           style={{flexDirection: 'row', alignItems: 'center', marginTop: 10}}>
+          {isInCart ? (
+            <View style={{flex: 1, flexDirection: 'row'}}>
+              <TouchableOpacity
+                style={[
+                  styles.addToCartButton,
+                  {
+                    flex: 1,
+                    borderTopEndRadius: 0,
+                    borderBottomEndRadius: 0,
+                  },
+                ]}
+                onPress={handleDecrementQuantity}>
+                <Text style={styles.buttonText}>-</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.addToCartButton,
+                  {flex: 1, borderRadius: 0, marginHorizontal: 0.5},
+                ]}>
+                <Text style={styles.buttonText}>{cartProduct.quantity}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.addToCartButton,
+                  {
+                    flex: 1,
+                    borderTopStartRadius: 0,
+                    borderBottomStartRadius: 0,
+                  },
+                ]}
+                onPress={handleIncrementQuantity}>
+                <Text style={styles.buttonText}>+</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <TouchableOpacity
+              style={[styles.addToCartButton, {flex: 1, marginRight: 5}]}
+              onPress={handleAddToCart}>
+              <Image
+                style={styles.addToCartImage}
+                source={require('../images/bag.png')}
+              />
+              <Text style={styles.buttonText}>Add to Cart</Text>
+            </TouchableOpacity>
+          )}
+
           <TouchableOpacity
-            style={[styles.addToCartButton, {flex: 1, marginRight: 5}]}>
+            style={[
+              styles.addToCartButton,
+              {flex: 1, marginLeft: 5, backgroundColor: 'green'},
+            ]}>
             <Image
               style={styles.addToCartImage}
-              source={require('../images/bag.png')}
+              source={require('../images/heart.png')}
             />
-            <Text style={styles.buttonText}>Add to Cart</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.addToCartButton, {flex: 1, marginLeft: 5}]}>
-            <Image
-              style={styles.addToCartImage}
-              source={require('../images/bag.png')}
-            />
-            <Text style={styles.buttonText}>Add to Cart</Text>
+            <Text style={styles.buttonText}>Add to Wishlist</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -81,7 +148,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f8f8f8',
     padding: 10,
-    paddingBottom: 100,
+    marginBottom: 70,
   },
   productImage: {
     width: '100%',
