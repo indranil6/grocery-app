@@ -1,11 +1,19 @@
-import {View, Text, StyleSheet, Image} from 'react-native';
+import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import React from 'react';
 import CartIcon from './CartIcon';
+import {useNavigation} from '@react-navigation/native';
 
 const Header = () => {
+  const navigation = useNavigation();
   return (
     <View style={styles.header}>
       <View style={{flexDirection: 'row', alignItems: 'center', marginLeft: 5}}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Image
+            source={require('../images/back-arrow.png')}
+            style={styles.back}
+          />
+        </TouchableOpacity>
         <Image
           source={require('../images/playstore.png')}
           style={styles.brandLogo}
@@ -34,6 +42,12 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 25,
+  },
+  back: {
+    width: 20,
+    height: 20,
+    resizeMode: 'contain',
+    marginRight: 10,
   },
   brandText: {
     fontWeight: 'bold',

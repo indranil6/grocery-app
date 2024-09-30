@@ -131,7 +131,7 @@ const ProductDetailsPage = ({product}) => {
           <TouchableOpacity
             style={[
               styles.addToCartButton,
-              {flex: 1, marginLeft: 5, backgroundColor: 'green'},
+              {flex: 1, marginLeft: 5, backgroundColor: '#27ae60'},
             ]}>
             <Image
               style={styles.addToCartImage}

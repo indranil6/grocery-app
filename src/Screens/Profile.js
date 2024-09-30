@@ -47,7 +47,7 @@ const ProfilePage = () => {
         ...user,
         addresses: user?.addresses
           ? [...user?.addresses, newAddress]
-          : [newAddress],
+          : [{...newAddress, isPrimary: true}],
       };
 
       users.splice(users.indexOf(user), 1, modifiedUser);
@@ -84,7 +84,11 @@ const ProfilePage = () => {
       Alert.alert('Error', 'Please enter a valid 10-digit phone number.');
       return;
     }
-    setAddresses([...addresses, newAddress]);
+    setAddresses(prev =>
+      prev.length > 0
+        ? [...prev, newAddress]
+        : [{...newAddress, isPrimary: true}],
+    );
     addNewAddressToStorage(newAddress);
 
     closeModal();
@@ -156,11 +160,15 @@ const ProfilePage = () => {
         <View style={styles.addressSection}>
           <Text style={styles.sectionTitle}>My Addresses</Text>
 
-          <Image
-            source={require('../images/not-found.png')}
-            style={styles.notFoundImage}
-          />
-          <Text style={styles.notFoundText}>No saved addresses found</Text>
+          {addresses?.length === 0 && (
+            <>
+              <Image
+                source={require('../images/not-found.png')}
+                style={styles.notFoundImage}
+              />
+              <Text style={styles.notFoundText}>No saved addresses found</Text>
+            </>
+          )}
 
           {addresses?.map((item, index) => (
             <View
@@ -175,6 +183,7 @@ const ProfilePage = () => {
               />
 
               <View style={styles.addressInfo}>
+                <Text style={styles.primaryAddressText}>Primary</Text>
                 <Text style={styles.addressName}>
                   {item.name} - {item.phone}
                 </Text>
@@ -215,7 +224,7 @@ const ProfilePage = () => {
           <TouchableOpacity
             style={[
               styles.profileButton,
-              {flex: 1, marginLeft: 5, backgroundColor: 'green'},
+              {flex: 1, marginLeft: 5, backgroundColor: '#27ae60'},
             ]}>
             <Text style={styles.buttonText}>Log out</Text>
           </TouchableOpacity>
@@ -236,7 +245,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
-    backgroundColor: '#f9f9f9',
     marginBottom: 70,
   },
   profileSection: {
@@ -317,6 +325,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 5,
+    marginTop: 5,
   },
   addressSubInfo: {
     fontSize: 16,
@@ -324,10 +333,15 @@ const styles = StyleSheet.create({
     color: '#e74c3c',
     marginBottom: 10,
   },
-  emptyText: {
-    color: '#888',
-    textAlign: 'center',
-    marginTop: 10,
+  primaryAddressText: {
+    backgroundColor: '#e74c3c',
+    color: '#fff',
+    paddingHorizontal: 5,
+    paddingVertical: 2,
+    borderRadius: 5,
+    alignSelf: 'flex-start',
+    fontSize: 12,
+    fontWeight: 'bold',
   },
   input: {
     padding: 10,

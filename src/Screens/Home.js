@@ -14,6 +14,7 @@ import ProductCard from '../common/ProductCard';
 import Footer from '../common/Footer';
 import HomeSkeleton from '../skeletons/HomeSkeleton';
 import axios from 'axios';
+import {useDispatch} from 'react-redux';
 
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 
@@ -23,7 +24,7 @@ const EcommerceHome = () => {
   const [categories, setCategories] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
+  const dispatch = useDispatch();
   // Load products when a category is selected
   useEffect(() => {
     if (selectedCategory) {
@@ -48,6 +49,11 @@ const EcommerceHome = () => {
     setAllProducts(tempProducts);
     setCategories(categories);
     setIsLoading(false);
+
+    dispatch({
+      type: 'ADD_ALL_PRODUCTS',
+      payload: tempProducts,
+    });
   };
 
   useEffect(() => {

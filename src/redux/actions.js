@@ -2,6 +2,7 @@ export const ADD_TO_CART = 'ADD_TO_CART';
 export const REMOVE_FROM_CART = 'REMOVE_FROM_CART';
 export const INCREMENT_QUANTITY = 'INCREMENT_QUANTITY';
 export const DECREMENT_QUANTITY = 'DECREMENT_QUANTITY';
+export const TOGGLE_WISHLIST = 'TOGGLE_WISHLIST';
 
 export const addToCart = product => {
   return {
@@ -28,5 +29,11 @@ export const decrementQuantity = id => {
   return {
     type: DECREMENT_QUANTITY,
     payload: id,
+  };
+};
+export const toggleWishlistSelection = payload => {
+  return {
+    type: TOGGLE_WISHLIST,
+    payload: payload,
   };
 };

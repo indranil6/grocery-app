@@ -1,9 +1,20 @@
 import {useNavigation} from '@react-navigation/native';
-import React from 'react';
+import React, {useMemo} from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
+import {toggleWishlistSelection} from '../redux/actions';
 
 const ProductCard = ({product, cardStyles}) => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const wishlist = useSelector(state => state.wishlist);
+  const addToWishlist = () => {
+    dispatch(toggleWishlistSelection(product));
+  };
+  const isInTheWishlist = useMemo(() => {
+    return wishlist.some(item => item.id === product.id);
+  }, [wishlist, product.id]);
+
   return (
     <TouchableOpacity
       style={[styles.card, cardStyles]}
@@ -17,7 +28,26 @@ const ProductCard = ({product, cardStyles}) => {
         <Text style={styles.description} numberOfLines={2}>
           {product.description}
         </Text>
-        <Text style={styles.price}>${product.price}</Text>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
+          <Text style={styles.price}>${product.price}</Text>
+          <TouchableOpacity
+            style={styles.wishlistIconContainer}
+            onPress={addToWishlist}>
+            <Image
+              source={
+                isInTheWishlist
+                  ? require('../images/heart-fill.png')
+                  : require('../images/heart.png')
+              }
+              style={{width: 20, height: 20}}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -62,6 +92,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#e74c3c',
+  },
+  wishlistIconContainer: {
+    backgroundColor: '#f8f8f8',
+    padding: 10,
+    borderRadius: 25,
+    elevation: 5,
   },
 });
 

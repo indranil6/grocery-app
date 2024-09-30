@@ -1,4 +1,11 @@
-import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  Alert,
+} from 'react-native';
 import React from 'react';
 import {useNavigation, useRoute} from '@react-navigation/native';
 
@@ -14,11 +21,8 @@ const Footer = () => {
   const route = useRoute();
   const selectedTab = route.name;
   const navigation = useNavigation();
-  const setSelectedTab = tab => {
-    if (tab === TABS.MAIN || tab === TABS.CART || tab === TABS.PROFILE)
-      navigation.navigate(tab);
-    else alert('Primarily for testing purpose');
-  };
+  const setSelectedTab = tab => navigation.navigate(tab);
+
   return (
     <View style={styles.drawerContainer}>
       <TouchableOpacity

@@ -21,18 +21,18 @@ const Signup = () => {
 
   const handleSignup = async () => {
     if (!email || !password || !confirmPassword) {
-      alert('Please fill in all fields');
+      Alert.alert('Please fill in all fields');
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      alert('Please enter a valid email address');
+      Alert.alert('Please enter a valid email address');
       return;
     }
 
     if (password !== confirmPassword) {
-      alert('Passwords do not match');
+      Alert.alert('Passwords do not match');
       return;
     }
 
@@ -41,11 +41,11 @@ const Signup = () => {
       const userExists = users.some(user => user.email === email);
 
       if (userExists) {
-        alert('User already exists');
+        Alert.alert('User already exists');
       } else {
         users.push({email, password});
         await AsyncStorage.setItem('users', JSON.stringify(users));
-        alert('Signup successful!');
+        Alert.alert('Signup successful!');
         navigation.navigate('Login');
       }
     } catch (error) {

@@ -11,6 +11,8 @@ import ProductDetails from './Screens/ProductDetails';
 import CartPage from './Screens/Cart';
 import CheckoutPage from './Screens/Checkout';
 import ProfilePage from './Screens/Profile';
+import Wishlist from './Screens/Wishlist';
+import SearchPage from './Screens/Search';
 
 const Stack = createNativeStackNavigator();
 
@@ -56,6 +58,16 @@ function AppNavigator() {
         <Stack.Screen
           name="Profile"
           component={ProfilePage}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Wishlist"
+          component={Wishlist}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Search"
+          component={SearchPage}
           options={{headerShown: false}}
         />
       </Stack.Navigator>

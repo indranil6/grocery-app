@@ -6,6 +6,7 @@ import {
   FlatList,
   StyleSheet,
   TouchableOpacity,
+  Pressable,
 } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import {useSelector, useDispatch} from 'react-redux';
@@ -17,6 +18,7 @@ import {
 import Header from '../common/Header';
 import Footer from '../common/Footer';
 import {useNavigation} from '@react-navigation/native';
+import CommonButton from '../common/CommonButton';
 
 const CartPage = () => {
   const cartItems = useSelector(state => state.cart.items);
@@ -75,8 +77,13 @@ const CartPage = () => {
         value={!!selectedItems[item.id]}
         onValueChange={() => toggleSelection(item.id)}
       />
-      <Image source={{uri: item.image}} style={styles.productImage} />
-      <View style={styles.productInfo}>
+      <Pressable
+        onPress={() => navigation.navigate('ProductDetails', {product})}>
+        <Image source={{uri: item.image}} style={styles.productImage} />
+      </Pressable>
+      <Pressable
+        style={styles.productInfo}
+        onPress={() => navigation.navigate('ProductDetails', {product})}>
         <Text style={styles.productName}>{item.title}</Text>
         <Text style={styles.productPrice}>${item.price}</Text>
         <View style={styles.quantityControl}>
@@ -92,7 +99,7 @@ const CartPage = () => {
             <Text style={styles.counterText}>+</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </Pressable>
       <TouchableOpacity
         onPress={() => handleRemove(item.id)}
         style={styles.deleteButton}>
@@ -114,22 +121,40 @@ const CartPage = () => {
           data={cartItems}
           renderItem={renderItem}
           keyExtractor={item => item.id.toString()}
+          ListEmptyComponent={
+            <>
+              <Image
+                source={require('../images/empty-cart.png')}
+                style={styles.notFoundImage}
+              />
+              <Text style={styles.notFoundText}>Your cart is empty</Text>
+              <CommonButton
+                title={'Continue Shopping'}
+                onPress={() => {
+                  navigation.navigate('Home');
+                }}
+              />
+            </>
+          }
         />
-        {/* Total Price Section */}
-        <View style={styles.totalSection}>
-          <Text style={styles.totalText}>
-            Total ({selectedCartItems?.length}):
-          </Text>
-          <Text style={styles.totalAmount}>${calculateTotalPrice}</Text>
-        </View>
-
-        {/* Checkout Button */}
-        <TouchableOpacity
-          style={styles.checkoutButton}
-          onPress={handleCheckout}>
-          <Text style={styles.checkoutText}>Proceed to Checkout</Text>
-        </TouchableOpacity>
-        {/* Add Checkout Button or Other UI Elements Here */}
+        {cartItems.length > 0 && (
+          <>
+            {/* Total Price Section */}
+            <View style={styles.totalSection}>
+              <Text style={styles.totalText}>
+                Total ({selectedCartItems?.length}):
+              </Text>
+              <Text style={styles.totalAmount}>${calculateTotalPrice}</Text>
+            </View>
+            {/* Checkout Button */}
+            <TouchableOpacity
+              style={styles.checkoutButton}
+              onPress={handleCheckout}>
+              <Text style={styles.checkoutText}>Proceed to Checkout</Text>
+            </TouchableOpacity>
+            {/* Add Checkout Button or Other UI Elements Here */}
+          </>
+        )}
       </View>
       <Footer />
     </View>
@@ -140,7 +165,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#fff',
     marginBottom: 70,
   },
   title: {
@@ -158,7 +182,7 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 5,
-    elevation: 2,
+    elevation: 4,
   },
   productImage: {
     width: 80,
@@ -243,6 +267,19 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  notFoundImage: {
+    width: 150,
+    height: 150,
+    alignSelf: 'center',
+  },
+  notFoundText: {
+    fontSize: 18,
+    alignSelf: 'center',
+    fontWeight: 'bold',
+    marginTop: 20,
+    marginBottom: 20,
+    color: 'black',
   },
 });
 

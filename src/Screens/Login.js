@@ -13,13 +13,13 @@ const Login = () => {
 
   const handleSignin = async () => {
     if (!email || !password) {
-      alert('Please fill in all fields');
+      Alert.alert('Please fill in all fields');
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      alert('Please enter a valid email address');
+      Alert.alert('Please enter a valid email address');
       return;
     }
 
@@ -33,13 +33,13 @@ const Login = () => {
         let signedInUser = {...user, isLoggedIn: true};
         users.splice(users.indexOf(user), 1, signedInUser);
         await AsyncStorage.setItem('users', JSON.stringify(users));
-        alert('Signin successful!');
+        Alert.alert('Signin successful!');
         navigation.navigate('Home'); // Navigate to Home
       } else {
-        alert('Invalid email or password');
+        Alert.alert('Invalid email or password');
       }
     } catch (error) {
-      Alert.alert('Error', 'An error occurred while logging in');
+      Alert.Alert.alert('Error', 'An error occurred while logging in');
     }
   };
   const isLoggedInUserFound = async () => {
