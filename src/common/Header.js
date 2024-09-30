@@ -1,5 +1,6 @@
 import {View, Text, StyleSheet, Image} from 'react-native';
 import React from 'react';
+import CartIcon from './CartIcon';
 
 const Header = () => {
   return (
@@ -11,7 +12,7 @@ const Header = () => {
         />
         <Text style={styles.brandText}>Grocer Spencer</Text>
       </View>
-      <Text style={styles.subText}>Sub Text</Text>
+      <CartIcon />
     </View>
   );
 };
@@ -20,7 +21,7 @@ export default React.memo(Header);
 
 const styles = StyleSheet.create({
   header: {
-    height: 50,
+    height: 60,
     width: '100%',
     backgroundColor: '#fff',
     alignItems: 'center',
@@ -30,9 +31,9 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   brandLogo: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
+    width: 40,
+    height: 40,
+    borderRadius: 25,
   },
   brandText: {
     fontWeight: 'bold',

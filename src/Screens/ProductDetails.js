@@ -17,6 +17,7 @@ import {
   decrementQuantity,
   incrementQuantity,
 } from '../redux/actions';
+import YouMayLike from '../common/YouMayLike';
 const ProductDetails = () => {
   const {params} = useRoute();
   const {product} = params;
@@ -24,6 +25,7 @@ const ProductDetails = () => {
     <View style={{flex: 1}}>
       <Header />
       <ProductDetailsPage product={product} />
+
       <Footer />
     </View>
   );
@@ -138,6 +140,8 @@ const ProductDetailsPage = ({product}) => {
             <Text style={styles.buttonText}>Add to Wishlist</Text>
           </TouchableOpacity>
         </View>
+
+        <YouMayLike />
       </View>
     </ScrollView>
   );

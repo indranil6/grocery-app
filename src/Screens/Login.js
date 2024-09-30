@@ -1,5 +1,5 @@
 import {View, Text, Image, StyleSheet, Alert} from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import CustomTextInput from '../common/CustomTextInput';
 import CommonButton from '../common/CommonButton';
 import {useNavigation} from '@react-navigation/native';
@@ -30,6 +30,9 @@ const Login = () => {
       );
 
       if (user) {
+        let signedInUser = {...user, isLoggedIn: true};
+        users.splice(users.indexOf(user), 1, signedInUser);
+        await AsyncStorage.setItem('users', JSON.stringify(users));
         alert('Signin successful!');
         navigation.navigate('Home'); // Navigate to Home
       } else {
@@ -39,7 +42,16 @@ const Login = () => {
       Alert.alert('Error', 'An error occurred while logging in');
     }
   };
-
+  const isLoggedInUserFound = async () => {
+    const users = JSON.parse(await AsyncStorage.getItem('users')) || [];
+    const user = users.find(user => user.isLoggedIn === true);
+    if (user) {
+      navigation.navigate('Home');
+    }
+  };
+  useEffect(() => {
+    isLoggedInUserFound();
+  }, []);
   const handleIconPress = () => {
     setShowPassword(!showPassword);
   };

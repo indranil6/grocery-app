@@ -8,18 +8,16 @@ import {
   Image,
   StyleSheet,
   ScrollView,
+  Button,
+  Alert,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import Header from '../common/Header';
 import Footer from '../common/Footer';
+import CommonButton from '../common/CommonButton';
 
-const CheckoutPage = ({navigation}) => {
-  const cartItems = useSelector(state => state.cart.items);
-  const totalPrice = useSelector(state =>
-    state.cart.items
-      .reduce((total, item) => total + item.price * item.quantity, 0)
-      .toFixed(2),
-  );
+const CheckoutPage = ({route, navigation}) => {
+  const {cartItems, totalPrice} = route.params;
 
   // For billing details
   const [name, setName] = useState('');
@@ -81,6 +79,22 @@ const CheckoutPage = ({navigation}) => {
             keyboardType="phone-pad"
             value={phone}
             onChangeText={setPhone}
+          />
+
+          <CommonButton
+            style={{
+              backgroundColor: '#e74c3c',
+              width: '50%',
+              height: 40,
+              borderRadius: 10,
+              alignItems: 'center',
+              justifyContent: 'center',
+              alignSelf: 'center',
+              marginTop: 10,
+            }}
+            title="+ Add Address"
+            textSize={16}
+            onPress={() => Alert.alert('Left button pressed')}
           />
         </View>
 

@@ -22,14 +22,24 @@ const CartPage = () => {
   const cartItems = useSelector(state => state.cart.items);
   const dispatch = useDispatch();
   const [selectedItems, setSelectedItems] = useState({});
-  const totalItems = useMemo(
-    () => Object.keys(selectedItems).length,
-    [selectedItems],
-  );
+
+  React.useEffect(() => {
+    cartItems.forEach(item => {
+      setSelectedItems(prevSelectedItems => ({
+        ...prevSelectedItems,
+        [item.id]: true,
+      }));
+    });
+  }, [cartItems]);
+
   const navigation = useNavigation();
   const handleCheckout = () => {
     // Handle checkout logic
-    navigation.navigate('Checkout');
+    navigation.navigate('Checkout', {
+      cartItems: selectedCartItems,
+      totalItems: selectedCartItems.length,
+      totalPrice: calculateTotalPrice,
+    });
   };
 
   const toggleSelection = id => {
@@ -38,6 +48,9 @@ const CartPage = () => {
       [id]: !prevSelectedItems[id],
     }));
   };
+  const selectedCartItems = useMemo(() => {
+    return cartItems.filter(item => selectedItems[item.id]);
+  }, [cartItems, selectedItems]);
 
   const handleIncrement = id => {
     dispatch(incrementQuantity(id));
@@ -51,10 +64,10 @@ const CartPage = () => {
     dispatch(removeFromCart(id));
   };
   const calculateTotalPrice = useMemo(() => {
-    return cartItems
+    return selectedCartItems
       .reduce((total, item) => total + item.price * item.quantity, 0)
       .toFixed(2);
-  }, [cartItems]);
+  }, [selectedCartItems]);
 
   const renderItem = ({item}) => (
     <View style={styles.cartItem}>
@@ -104,7 +117,9 @@ const CartPage = () => {
         />
         {/* Total Price Section */}
         <View style={styles.totalSection}>
-          <Text style={styles.totalText}>Total:</Text>
+          <Text style={styles.totalText}>
+            Total ({selectedCartItems?.length}):
+          </Text>
           <Text style={styles.totalAmount}>${calculateTotalPrice}</Text>
         </View>
 

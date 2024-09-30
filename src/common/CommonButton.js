@@ -6,24 +6,28 @@ const CommonButton = ({
   title,
   bgColor = 'black',
   textColor = 'white',
+  textSize = 20,
+  style,
 }) => {
   return (
     <TouchableOpacity
       onPress={onPress}
-      style={{
-        backgroundColor: bgColor,
-        width: '85%',
-        height: 50,
-        borderRadius: 10,
-        alignItems: 'center',
-        justifyContent: 'center',
-        alignSelf: 'center',
-        marginTop: 25,
-      }}>
+      style={
+        style || {
+          backgroundColor: bgColor,
+          width: '85%',
+          height: 50,
+          borderRadius: 10,
+          alignItems: 'center',
+          justifyContent: 'center',
+          alignSelf: 'center',
+          marginTop: 25,
+        }
+      }>
       <Text
         style={{
           color: textColor,
-          fontSize: 20,
+          fontSize: textSize,
         }}>
         {title}
       </Text>

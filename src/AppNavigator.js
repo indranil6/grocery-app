@@ -10,6 +10,7 @@ import Home from './Screens/Home';
 import ProductDetails from './Screens/ProductDetails';
 import CartPage from './Screens/Cart';
 import CheckoutPage from './Screens/Checkout';
+import ProfilePage from './Screens/Profile';
 
 const Stack = createNativeStackNavigator();
 
@@ -50,6 +51,11 @@ function AppNavigator() {
         <Stack.Screen
           name="Checkout"
           component={CheckoutPage}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={ProfilePage}
           options={{headerShown: false}}
         />
       </Stack.Navigator>
